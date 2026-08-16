@@ -60,4 +60,19 @@ export const conceptVisuals: Record<string, ConceptVisualConfig> = {
       position: [0, 0, 0],
     },
   },
+  // Placeholder GLB untuk tiap konsep — bukti pipeline bisa render semua tipe.
+  // Saat model Sketchfab siap: copy .glb ke public/models/ & ganti path di bawah.
+  // Untuk mengaktifkan di halaman konsep: ubah type konsep di atas dari 'primitive'→'glb'.
+  qubitGLB: {
+    type: 'glb',
+    glb: { path: '/models/qubit.glb', scale: 1, position: [0, 0, 0] },
+  },
+  blochGLB: {
+    type: 'glb',
+    glb: { path: '/models/bloch-sphere.glb', scale: 1, position: [0, 0, 0] },
+  },
+  entanglementGLB: {
+    type: 'glb',
+    glb: { path: '/models/entanglement-pair.glb', scale: 1, position: [0, 0, 0] },
+  },
 }

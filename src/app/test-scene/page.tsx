@@ -22,7 +22,7 @@ export default function TestScenePage() {
           Quantum Computing Visualization Test
         </h1>
         <p className="text-center text-gray-600 mb-8">
-          Semua primitive dirender via <code className="bg-gray-100 px-1 rounded">ConceptModel</code>{' '}
+          Primitive &amp; GLB dirender via <code className="bg-gray-100 px-1 rounded">ConceptModel</code>{' '}
           (config-driven). Orbit dengan mouse.
         </p>
 
@@ -37,9 +37,6 @@ export default function TestScenePage() {
           {/* Entanglement Pair */}
           <ConceptCard id="entanglementPair" title="Entanglement" desc="Dua qubit berdenyut sinkron + partikel mengalir" />
 
-          {/* GLB TEST — bukti pipeline load model GLB */}
-          <ConceptCard id="testGlb" title="GLB Model (test)" desc="Memuat /models/qubit.glb via GLBModel — bukti switching type:'glb'" />
-
           {/* Reference direct render (baseline) */}
           <div className="bg-white rounded-xl shadow-lg p-4">
             <h2 className="text-lg font-semibold text-center mb-2">Direct (reference)</h2>
@@ -50,6 +47,18 @@ export default function TestScenePage() {
               </Scene>
             </div>
           </div>
+        </div>
+
+        {/* GLB PIPELINE — bukti switching type:'glb' untuk semua konsep */}
+        <h2 className="text-2xl font-bold mt-12 mb-4 text-center">Pipeline GLB (placeholder)</h2>
+        <p className="text-center text-sm text-gray-500 mb-6">
+          Memuat model GLB via <code className="bg-gray-100 px-1 rounded">GLBModel</code> — saat
+          model Sketchfab siap, ganti file &amp; config tanpa ubah halaman.
+        </p>
+        <div className="grid md:grid-cols-3 gap-6">
+          <ConceptCard id="qubitGLB" title="Qubit (GLB)" desc="/models/qubit.glb" />
+          <ConceptCard id="blochGLB" title="Bloch (GLB)" desc="/models/bloch-sphere.glb" />
+          <ConceptCard id="entanglementGLB" title="Entanglement (GLB)" desc="/models/entanglement-pair.glb" />
         </div>
 
         <div className="mt-6 text-center text-sm text-gray-500">

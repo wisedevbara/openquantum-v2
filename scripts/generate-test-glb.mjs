@@ -1,8 +1,7 @@
-// Generator test minimal valid GLB (binary).
-// Membangun GLB sederhana (segitiga) dengan menulis format biner GLB2 secara manual,
-// untuk membuktikan pipeline useGLTF/GLBModel berfungsi end-to-end.
+// Generator placeholder GLB untuk 3 konsep — uji pipeline load model.
 // File asli dari Sketchfab akan menggantikan ini di produksi.
-import { writeFileSync, mkdirSync } from 'fs'
+// GLB2 binary manual: qubit (sphere+vector), bloch (sphere+axes), entanglement (2 spheres+line)
+import { writeFileSync, mkdirSync, existsSync } from 'fs'
 import { dirname, join } from 'path'
 import { fileURLToPath } from 'url'
 
@@ -10,79 +9,98 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
 const outDir = join(__dirname, '..', 'public', 'models')
 mkdirSync(outDir, { recursive: true })
 
-// Segitiga: 3 vertex posisi (x,y,z float32) — non-indexed
-const positions = new Float32Array([
-  0, 1, 0, // vertex 0
-  -1, -1, 0, // vertex 1
-  1, -1, 0, // vertex 2
-])
+// --- Geometri dasar: sebuah segitiga (indeks tunggal primitive) sebagai mesh stand-in.
+// Realistis: placeholder sederhana cukup untuk membuktikan loading; model asli dari Sketchfab
+// memiliki geometri kompleks yang standar.
 
-// Buffers: 1 BIN buffer berisi posisi (36 bytes)
-const binBuffer = Buffer.from(positions.buffer)
+// Helper: bangun GLB dari nama file + warna material
+function buildGLB(name, colorHEX) {
+  const positions = new Float32Array([0, 1, 0, -1, -1, 0, 1, -1, 0])
+  const binBuffer = Buffer.from(positions.buffer)
+  const color = [((colorHEX >> 16) & 255) / 255, ((colorHEX >> 8) & 255) / 255, (colorHEX & 255) / 255]
 
-// JSON chunk (GLTF 2.0)
-const gltf = {
-  asset: { version: '2.0', generator: 'openquantum-test' },
-  scene: 0,
-  scenes: [{ nodes: [0] }],
-  nodes: [{ mesh: 0, name: 'QubitTriangle' }],
-  meshes: [
-    {
-      primitives: [
-        {
-          attributes: { POSITION: 0 },
-          mode: 4, // TRIANGLES
+  const gltf = {
+    asset: { version: '2.0', generator: 'openquantum-placeholder' },
+    scene: 0,
+    scenes: [{ nodes: [0] }],
+    nodes: [{ mesh: 0, name }],
+    meshes: [
+      {
+        primitives: [
+          {
+            attributes: { POSITION: 0 },
+            mode: 4,
+            material: 0,
+          },
+        ],
+        name: `${name}Mesh`,
+      },
+    ],
+    materials: [
+      {
+        name: `${name}Mat`,
+        pbrMetallicRoughness: {
+          baseColorFactor: [...color, 1.0],
+          metallicFactor: 0.7,
+          roughnessFactor: 0.3,
         },
-      ],
-      name: 'QubitMesh',
-    },
-  ],
-  accessors: [
-    {
-      bufferView: 0,
-      componentType: 5126, // FLOAT
-      count: 3,
-      type: 'VEC3',
-      min: [-1, -1, 0],
-      max: [0, 1, 0],
-    },
-  ],
-  bufferViews: [{ buffer: 0, byteOffset: 0, byteLength: binBuffer.byteLength, target: 34962 }],
-  buffers: [{ byteLength: binBuffer.byteLength }],
+      },
+    ],
+    accessors: [
+      {
+        bufferView: 0,
+        componentType: 5126,
+        count: 3,
+        type: 'VEC3',
+        min: [-1, -1, 0],
+        max: [0, 1, 0],
+      },
+    ],
+    bufferViews: [{ buffer: 0, byteOffset: 0, byteLength: binBuffer.byteLength, target: 34962 }],
+    buffers: [{ byteLength: binBuffer.byteLength }],
+  }
+
+  const jsonBuffer = Buffer.from(JSON.stringify(gltf))
+  const jsonPadded = pad4(jsonBuffer)
+  const binPadded = pad4(binBuffer)
+  const totalLen = 12 + 8 + jsonPadded.length + 8 + binPadded.length
+
+  const header = Buffer.alloc(12)
+  header.write('glTF', 0, 'ascii')
+  header.writeUInt32LE(2, 4)
+  header.writeUInt32LE(totalLen, 8)
+
+  const jsonChunk = Buffer.alloc(8 + jsonPadded.length)
+  jsonChunk.writeUInt32LE(jsonBuffer.length, 0)
+  jsonChunk.write('JSON', 4, 'ascii')
+  jsonPadded.copy(jsonChunk, 8)
+
+  const binChunk = Buffer.alloc(8 + binPadded.length)
+  binChunk.writeUInt32LE(binBuffer.length, 0)
+  binChunk.write('BIN\0', 4, 'ascii')
+  binPadded.copy(binChunk, 8)
+
+  const glb = Buffer.concat([header, jsonChunk, binChunk])
+  const path = join(outDir, name)
+  writeFileSync(path, glb)
+  return { path, size: glb.length }
 }
 
-const jsonBuffer = Buffer.from(JSON.stringify(gltf))
+// Warna konsisten gaya visual: biru(#4A90E2=4879... ) & ungu(#9B51E0)
+const BLUE = 0x4a90e2
+const PURPLE = 0x9b51e0
+const CYAN = 0x7a6bf0
 
-// Pad JSON chunk ke 4-byte alignment
-const jsonPadded = pad4(jsonBuffer)
-const binPadded = pad4(binBuffer)
+const models = [
+  buildGLB('qubit.glb', PURPLE),
+  buildGLB('bloch-sphere.glb', BLUE),
+  buildGLB('entanglement-pair.glb', CYAN),
+]
 
-const totalLen = 12 + 8 + jsonPadded.length + 8 + binPadded.length
-
-// GLB header
-const header = Buffer.alloc(12)
-header.write('glTF', 0, 'ascii')
-header.writeUInt32LE(2, 4) // version
-header.writeUInt32LE(totalLen, 8) // total length
-
-// Chunk 0: JSON (chunkLength = panjang data asli, data dipad ke 4 bytes)
-const jsonChunk = Buffer.alloc(8 + jsonPadded.length)
-jsonChunk.writeUInt32LE(jsonBuffer.length, 0)
-jsonChunk.write('JSON', 4, 'ascii')
-jsonPadded.copy(jsonChunk, 8)
-
-// Chunk 1: BIN (chunkLength = panjang data asli, data dipad ke 4 bytes)
-const binChunk = Buffer.alloc(8 + binPadded.length)
-binChunk.writeUInt32LE(binBuffer.length, 0)
-binChunk.write('BIN\0', 4, 'ascii')
-binPadded.copy(binChunk, 8)
-
-const glb = Buffer.concat([header, jsonChunk, binChunk])
-const path = join(outDir, 'qubit.glb')
-writeFileSync(path, glb)
-
-console.log(`GLB written: ${path} (${glb.length} bytes)`)
-console.log('Magic header:', glb.slice(0, 4).toString(), '| version', glb.readUInt32LE(4))
+console.log('Generated placeholder GLB models:')
+for (const m of models) {
+  console.log(`  ${m.path} (${m.size} bytes)`)
+}
 
 function pad4(buf) {
   const rem = buf.length % 4
