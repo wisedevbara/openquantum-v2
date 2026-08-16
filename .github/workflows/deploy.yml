@@ -41,6 +41,6 @@ jobs:
           username: ${{ secrets.DEPLOY_USER }}
           key: ${{ secrets.DEPLOY_KEY }}
           script: |
-            cd /opt/openquantumv2
+            cd /opt/openquantum-v2
             docker compose -f docker-compose.yml up --build -d app-prod nginx || true
         continue-on-error: true
