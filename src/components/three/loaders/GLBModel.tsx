@@ -1,0 +1,1 @@
+// GLBModel loader with Suspense
