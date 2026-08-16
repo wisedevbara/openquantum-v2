@@ -37,6 +37,9 @@ export default function TestScenePage() {
           {/* Entanglement Pair */}
           <ConceptCard id="entanglementPair" title="Entanglement" desc="Dua qubit berdenyut sinkron + partikel mengalir" />
 
+          {/* GLB TEST — bukti pipeline load model GLB */}
+          <ConceptCard id="testGlb" title="GLB Model (test)" desc="Memuat /models/qubit.glb via GLBModel — bukti switching type:'glb'" />
+
           {/* Reference direct render (baseline) */}
           <div className="bg-white rounded-xl shadow-lg p-4">
             <h2 className="text-lg font-semibold text-center mb-2">Direct (reference)</h2>

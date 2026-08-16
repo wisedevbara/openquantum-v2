@@ -49,4 +49,15 @@ export const conceptVisuals: Record<string, ConceptVisualConfig> = {
     type: 'primitive',
     primitive: 'EntanglementPair',
   },
+  // TEST GLB — membuktikan pipeline load model GLB berfungsi.
+  // Ini MEMPERLIHATKAN kemampuan switching; file asli dari Sketchfab akan
+  // menggantikan /models/qubit.glb dan memakai id konsep sebenarnya.
+  testGlb: {
+    type: 'glb',
+    glb: {
+      path: '/models/qubit.glb',
+      scale: 1,
+      position: [0, 0, 0],
+    },
+  },
 }
