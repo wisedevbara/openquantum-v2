@@ -1,6 +1,5 @@
 import type { MDXComponents } from 'mdx/types'
-import Scene from '@/components/three/Scene'
-import QubitSphere from '@/components/three/primitives/QubitSphere'
+import ConceptModel from '@/components/three/ConceptModel'
 
 /**
  * MDXComponents.tsx - Custom component map for MDX content
@@ -19,17 +18,26 @@ import QubitSphere from '@/components/three/primitives/QubitSphere'
  * 
  * Lanjutan teks setelah visualisasi 3D...
  * ```
+ * 
+ * QubitDemo sekarang dirender melalui ConceptModel (config-driven) —
+ * memunculkan QubitSphere (primitive) saat ini, siap beralih ke GLB.
  */
 
-// QubitDemo is a reusable wrapper embedding QubitSphere inside a Scene,
-// with a caption. This is what article authors reference in MDX.
-export function QubitDemo({ caption = 'Visualisasi 3D qubit' }: { caption?: string }) {
+// QubitDemo wraps ConceptModel (which includes Scene) with a caption.
+// This is what article authors reference in MDX.
+export function QubitDemo({
+  id = 'qubit',
+  caption = 'Visualisasi 3D',
+  className = '',
+}: {
+  id?: string
+  caption?: string
+  className?: string
+}) {
   return (
     <figure className="my-8">
       <div className="rounded-xl overflow-hidden bg-gradient-to-br from-slate-900 to-slate-800 h-72">
-        <Scene>
-          <QubitSphere />
-        </Scene>
+        <ConceptModel id={id} className={className} />
       </div>
       {caption && (
         <figcaption className="mt-3 text-center text-sm text-gray-500 italic">
