@@ -26,7 +26,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
   const content = await compileMdx(article.content, mdxComponents)
 
   return (
-    <main className="min-h-screen bg-gray-50 py-12">
+    <main className="bg-gray-50 py-12">
       <article className="max-w-3xl mx-auto px-4">
         <Link href="/artikel" className="text-sm text-blue-600 hover:underline mb-8 inline-block">
           ← Kembali ke daftar artikel

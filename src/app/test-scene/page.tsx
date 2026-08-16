@@ -16,7 +16,7 @@ import ConceptModel from '@/components/three/ConceptModel'
 
 export default function TestScenePage() {
   return (
-    <main className="min-h-screen bg-gray-50 p-8">
+    <main className="bg-gray-50 p-8">
       <div className="max-w-5xl mx-auto">
         <h1 className="text-3xl font-bold mb-2 text-center">
           Quantum Computing Visualization Test

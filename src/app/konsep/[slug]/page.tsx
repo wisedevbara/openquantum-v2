@@ -31,7 +31,7 @@ export default async function KonsepPage({ params }: KonsepPageProps) {
   const content = await compileMdx(concept.content, mdxComponents)
 
   return (
-    <main className="min-h-screen bg-gray-50 pb-12">
+    <main className="bg-gray-50 pb-12">
       <div className="max-w-4xl mx-auto px-4">
         <Link href="/konsep" className="text-sm text-blue-600 hover:underline pt-8 inline-block">
           ← Kembali ke daftar konsep
