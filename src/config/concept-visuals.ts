@@ -41,4 +41,12 @@ export const conceptVisuals: Record<string, ConceptVisualConfig> = {
     type: 'primitive',
     primitive: 'QubitSphere',
   },
+  blochSphere: {
+    type: 'primitive',
+    primitive: 'BlochSphere',
+  },
+  entanglementPair: {
+    type: 'primitive',
+    primitive: 'EntanglementPair',
+  },
 }

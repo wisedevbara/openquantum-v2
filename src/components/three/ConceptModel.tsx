@@ -2,6 +2,8 @@
 
 import Scene from '@/components/three/Scene'
 import QubitSphere from '@/components/three/primitives/QubitSphere'
+import BlochSphere from '@/components/three/primitives/BlochSphere'
+import EntanglementPair from '@/components/three/primitives/EntanglementPair'
 import GLBModel from '@/components/three/loaders/GLBModel'
 import { conceptVisuals } from '@/config/concept-visuals'
 
@@ -31,6 +33,8 @@ interface ConceptModelProps {
 // Ini menjaga ConceptModel tetap config-driven (tidak hardcode).
 const primitiveComponents: Record<string, React.ComponentType> = {
   QubitSphere,
+  BlochSphere,
+  EntanglementPair,
 }
 
 export default function ConceptModel({ id, className = '' }: ConceptModelProps) {
