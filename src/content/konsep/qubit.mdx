@@ -1,3 +1,25 @@
+---
+title: "Qubit"
+description: "Unit dasar informasi kuantum yang bisa berada dalam superposisi |0⟩ dan |1⟩ sekaligus."
+conceptId: "qubit"
+---
+
 # Qubit
 
-Dasar-dasar qubit.
+Qubit adalah unit dasar informasi dalam komputasi kuantum. Berbeda dengan bit klasik yang hanya bisa bernilai `0` atau `1`, sebuah qubit dapat berada dalam **superposisi** — kombinasi keduanya sekaligus.
+
+## Mengapa Berbeda?
+
+Simbol ini adalah notasi standar untuk state qubit:
+
+```
+|ψ⟩ = α|0⟩ + β|1⟩
+```
+
+Di mana `α` dan `β` adalah amplitudo probabilitas yang menentukan seberapa besar kontribusi `|0⟩` dan `|1⟩`.
+
+<QubitDemo id="qubit" caption="Visualisasi qubit — rotasi & denyutan mewakili superposisi" />
+
+## Intuisi
+
+Bayangkan sebuah koin yang berputar. Saat berputar, ia tidak bisa dikatakan "kepala" atau "ekor" secara pasti — ia adalah kombinasi dari keduanya hingga diukur. Qubit bekerja dengan cara serupa, tetapi pada skala kuantum.

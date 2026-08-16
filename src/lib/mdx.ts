@@ -26,15 +26,46 @@ import type { MDXComponents } from 'mdx/types'
  */
 
 const contentDirectory = join(process.cwd(), 'src/content/artikel')
+const conceptDirectory = join(process.cwd(), 'src/content/konsep')
 
 /**
- * Get all article slugs (filenames without .mdx extension)
+ * Reusable helper: baca semua slug (.mdx) dari sebuah direktori konten.
+ * Dipakai ulang oleh artikel & konsep — mencegah duplikasi logic.
  */
-export function getArticleSlugs(): string[] {
-  const filenames = readdirSync(contentDirectory)
+function getSlugsIn(dir: string): string[] {
+  const filenames = readdirSync(dir)
   return filenames
     .filter(file => file.endsWith('.mdx'))
     .map(file => file.replace(/\.mdx$/, ''))
+}
+
+/**
+ * Reusable helper: parse frontmatter + konten dari sebuah file MDX.
+ * Mengembalikan metadata & konten mentah (belum di-compile).
+ */
+function parseMdxFile<TMetadata>(dir: string, slug: string): {
+  slug: string
+  metadata: TMetadata
+  content: string
+} | null {
+  try {
+    const fullPath = join(dir, `${slug}.mdx`)
+    const fileContents = readFileSync(fullPath, 'utf8')
+    const { data, content } = matter(fileContents)
+    return {
+      slug,
+      metadata: data as TMetadata,
+      content,
+    }
+  } catch (error) {
+    // File tidak ditemukan atau error lain
+    return null
+  }
+}
+
+/** Get all article slugs (filenames without .mdx extension) */
+export function getArticleSlugs(): string[] {
+  return getSlugsIn(contentDirectory)
 }
 
 /**
@@ -158,4 +189,71 @@ export function formatDate(dateString: string): string {
   const year = date.getFullYear()
   
   return `${day} ${month} ${year}`
+}
+
+// ============================================================================
+// KONSEP (quantum concepts) — reuse helper yang sama dengan artikel
+// ============================================================================
+
+/** Metadata frontmatter untuk konten konsep */
+export interface ConceptMetadata {
+  title: string
+  description: string
+  /** id visual 3D di concept-visuals.ts: "qubit" | "blochSphere" | "entanglementPair" */
+  conceptId: string
+}
+
+/** Get all concept slugs (filenames without .mdx extension) */
+export function getConceptSlugs(): string[] {
+  return getSlugsIn(conceptDirectory)
+}
+
+/**
+ * Get list of all concepts with metadata.
+ * Reuses parseMdxFile (same parsing logic as articles).
+ */
+export function getAllConcepts(): Array<{
+  slug: string
+  metadata: ConceptMetadata
+}> {
+  const slugs = getConceptSlugs()
+
+  return slugs
+    .map(slug => {
+      const parsed = parseMdxFile<Partial<ConceptMetadata>>(conceptDirectory, slug)
+      if (!parsed) return null
+      return {
+        slug,
+        metadata: {
+          title: parsed.metadata.title || slug,
+          description: parsed.metadata.description || '',
+          conceptId: parsed.metadata.conceptId || '',
+        },
+      }
+    })
+    .filter((c): c is NonNullable<typeof c> => c !== null)
+    .sort((a, b) => a.metadata.title.localeCompare(b.metadata.title))
+}
+
+/**
+ * Get a single concept by slug, including content.
+ * Reuse parseMdxFile (same parsing logic as articles).
+ */
+export function getConceptBySlug(slug: string): {
+  slug: string
+  metadata: ConceptMetadata
+  content: string
+} | null {
+  const parsed = parseMdxFile<Partial<ConceptMetadata>>(conceptDirectory, slug)
+  if (!parsed) return null
+
+  return {
+    slug,
+    metadata: {
+      title: parsed.metadata.title || slug,
+      description: parsed.metadata.description || '',
+      conceptId: parsed.metadata.conceptId || '',
+    },
+    content: parsed.content,
+  }
 }

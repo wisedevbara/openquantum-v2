@@ -1,3 +1,23 @@
+---
+title: "Bloch Sphere"
+description: "Representasi visual standar dari state sebuah qubit sebagai titik pada permukaan bola."
+conceptId: "blochSphere"
+---
+
 # Bloch Sphere
 
-Visualisasi representasi qubit.
+Bloch sphere adalah cara paling umum untuk memvisualisasikan state sebuah qubit. Satu titik pada permukaan bola mewakili keseluruhan state qubit tersebut.
+
+## Komponen Utama
+
+- **Permukaan bola** — ruang semua kemungkinan state qubit
+- **Vektor** (dari pusat ke permukaan) — state qubit saat ini
+- **Sumbu X, Y, Z** — orientasi untuk membantu membaca posisi
+
+<QubitDemo id="blochSphere" caption="Bloch sphere — vektor state bergerak perlahan (presesi)" />
+
+## Titik Kunci
+
+- Kutub **atas** (`|0⟩`) dan **bawah** (`|1⟩`) mewakili state basis klasik
+- Titik di **ekuator** mewakili superposisi seimbang
+- Posisi vektor menentukan state qubit secara lengkap
