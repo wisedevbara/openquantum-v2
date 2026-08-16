@@ -11,7 +11,8 @@ WORKDIR /app
 
 # Copy package files
 COPY package.json pnpm-lock.yaml* ./
-RUN corepack enable pnpm && pnpm install --frozen-lockfile
+# ignore-scripts avoids pnpm post-install failures (e.g. sharp) in build
+RUN corepack enable pnpm && pnpm config set ignore-scripts true && pnpm install --frozen-lockfile
 
 # Rebuild the source code only when needed
 FROM base AS builder
