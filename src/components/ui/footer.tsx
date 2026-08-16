@@ -13,7 +13,15 @@ export default function Footer() {
         <div className="flex items-center gap-4 text-sm text-gray-500">
           <Link href="/konsep" className="hover:text-gray-900">Konsep</Link>
           <Link href="/artikel" className="hover:text-gray-900">Artikel</Link>
-          <span className="text-gray-400">by Bara</span>
+          <span className="text-gray-400">by</span>
+          <a
+            href="https://x.com/BaraMigSpace"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-gray-900"
+          >
+            Bara
+          </a>
         </div>
       </div>
     </footer>
