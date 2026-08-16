@@ -61,8 +61,8 @@ export default function Scene({ children }: SceneProps) {
         <ambientLight intensity={0.35} />
         <directionalLight position={[5, 5, 5]} intensity={0.4} />
 
-        {/* Atmosphere: subtle distant particle field (low opacity) */}
-        <Sparkles count={90} scale={7} size={1.6} speed={0.25} opacity={0.35} color="#8ab8ff" />
+        {/* Atmosphere: subtle distant particle field (low opacity, non-distracting) */}
+        <Sparkles count={60} scale={6} size={1.2} speed={0.2} opacity={0.22} color="#8ab8ff" />
 
         {/* The actual visualization content goes here */}
         {children}
@@ -70,14 +70,14 @@ export default function Scene({ children }: SceneProps) {
         {/* Mouse controls */}
         <OrbitControls enableDamping enablePan={false} minDistance={2} maxDistance={10} autoRotate={false} />
 
-        {/* Post-processing Bloom — glow on emissive parts only */}
-        <EffectComposer>
+        {/* Post-processing Bloom — subtle glow on emissive parts only */}
+        <EffectComposer multisampling={0}>
           <Bloom
-            intensity={0.5}
-            luminanceThreshold={0.25}
-            luminanceSmoothing={0.2}
+            intensity={0.4}
+            luminanceThreshold={0.35}
+            luminanceSmoothing={0.3}
             mipmapBlur
-            radius={0.7}
+            radius={0.5}
           />
         </EffectComposer>
       </Suspense>

@@ -61,7 +61,9 @@ export default function ConceptModel({ id, className = '' }: ConceptModelProps) 
   }
 
   return (
-    <div className={className}>
+    // Container ini memberi parent berukuran penuh (h-full w-full) supaya kanvas
+    // R3F mengisi card, bukan collapse. className opsional tetap dipertahankan.
+    <div className={`relative h-full w-full ${className}`}>
       <Scene>{visual}</Scene>
     </div>
   )
