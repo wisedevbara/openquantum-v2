@@ -1,5 +1,6 @@
 import type { MDXComponents } from 'mdx/types'
 import ConceptModel from '@/components/three/ConceptModel'
+import InteractiveQubit from '@/components/mdx/InteractiveQubit'
 
 /**
  * MDXComponents.tsx - Custom component map for MDX content
@@ -52,4 +53,6 @@ export function QubitDemo({
 export const mdxComponents: MDXComponents = {
   // Custom 3D components (ready for article embedding)
   QubitDemo,
+  // Interactive educational component (simulate measurement/collapse)
+  InteractiveQubit,
 }
