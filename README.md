@@ -100,7 +100,7 @@ npm start
 
 ## 👥 Author
 
-- **Hiba Ambara** - [@wisedevbara](https://github.com/wisedevbara)
+- **Bara** - [@BaraMigSpace](https://x.com/BaraMigSpace)
 - Project dikembangkan untuk openquantum.id
 
 ## 📄 License
