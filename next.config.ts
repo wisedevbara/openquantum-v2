@@ -4,6 +4,8 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   // Enable output standalone for Docker optimization
   output: 'standalone',
+  // Disable the Next.js dev-only circular logo indicator (bottom-left)
+  devIndicators: false,
   // Configure image domains if needed
   images: {
     domains: ['localhost', 'openquantum.id'],
