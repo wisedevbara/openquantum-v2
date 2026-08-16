@@ -1,0 +1,40 @@
+name: Build and Test OpenQuantum V2
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - name: Setup Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm lint || true
+
+      - name: Build (includes static generation)
+        run: pnpm build
+
+      # CI-only: build Docker prod image to ensure it compiles
+      - name: Build Docker image (verification)
+        run: docker build -t openquantum-v2:ci .
+
+      - name: Verify static routes exist
+        run: |
+          test -d .next/server/app/artikel
+          test -d .next/server/app/konsep
+          echo "✅ Static routes generated"

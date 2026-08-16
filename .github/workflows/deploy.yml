@@ -1,0 +1,46 @@
+name: Deploy OpenQuantum V2
+
+on:
+  workflow_dispatch: # triggered manually
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - name: Setup Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install & build
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm build
+
+      # SSH deploy — contoh untuk VPS Tencent Cloud
+      # Sesuaikan secrets: DEPLOY_HOST, DEPLOY_USER, DEPLOY_KEY
+      - name: Deploy via SSH
+        uses: appleboy/scp-action@v0.1.8
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_KEY }}
+          source: "."
+          target: "/opt/openquantum-v2"
+        continue-on-error: true # blueprint — sesuaikan pipeline produksi Anda
+
+      - name: Restart container on server
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_KEY }}
+          script: |
+            cd /opt/openquantumv2
+            docker compose -f docker-compose.yml up --build -d app-prod nginx || true
+        continue-on-error: true
