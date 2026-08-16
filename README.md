@@ -2,115 +2,110 @@
 
 > **⚛️ Quantum Computing Learning Platform with Interactive 3D Visualizations**
 
-OpenQuantum V2 adalah platform pembelajaran quantum computing interaktif yang menggabungkan konsep teori dengan visualisasi 3D menggunakan Three.js. Platform ini dirancang untuk pemula hingga profesional yang ingin memahami konsep kuantum melalui pengalaman belajar yang immersif.
+OpenQuantum V2 adalah platform pembelajaran quantum computing interaktif yang menggabungkan konsep teori dengan visualisasi 3D menggunakan Three.js (React Three Fiber). Ditujukan untuk pemula hingga profesional yang ingin memahami konsep kuantum secara intuitif dan immersif.
+
+---
 
 ## ✨ Fitur
 
-- **Visualisasi 3D Interaktif**: Eksplorasi konsep kuantum seperti qubit, Bloch sphere, dan entanglement melalui model 3D yang dapat diputar dan diinteraksikan
-- **Belajar Bertahap**: Mulai dari konsep dasar hingga topik lanjutan, disusun secara sistematis
-- **Prototipe Early Stage**: Penggunaan primitive placeholder Three.js untuk pengembangan cepat
-- **Rencana Integrasi Sketchfab**: Model GLB high-quality akan ditambahkan dari [Sketchfab](http://sketchfab.com) setelah prototype matang
+- **Visualisasi 3D Interaktif** — eksplorasi qubit, Bloch sphere, dan entanglement melalui kanvas WebGL yang bisa diputar & di-orbit
+- **3D mandiri / offline-friendly** — lighting self-contained (tanpa fetch aset HDR eksternal), sehingga visual tetap tampil di jaringan dengan kendala (region/Cloudflare)
+- **MDX dengan embedding komponen React** — komponen 3D bisa diselipkan langsung di tengah teks artikel & konsep, bukan sekadar ilustrasi terpisah
+- **Belajar bertahap** — dari konsep dasar hingga topik lanjutan, disusun sistematis
+- **Config-driven visual** — `concept-visuals.ts` memetakan id konsep → primitive atau GLB (siap-upgrade tanpa ubah halaman)
+- **Prototipe dengan placeholder Three.js**, rencana integrasi model GLB dari [Sketchfab](https://sketchfab.com)
 
-## 🏗️ Arsitektur
-
-Project ini menggunakan struktur modular:
+## 📌 Struktur
 
 ```
 openquantum-v2/
 ├── src/
 │   ├── app/
-│   │   ├── layout.tsx          # Root layout (font, metadata, providers)
-│   │   ├── page.tsx            # Homepage
-│   │   ├── globals.css
-│   │   ├── artikel/            # Blog/artikel quantum computing
-│   │   └── konsep/             # Halaman konsep interaktif dengan visualisasi 3D
+│   │   ├── layout.tsx / page.tsx / globals.css
+│   │   ├── artikel/          # listing + detail artikel (MDX)
+│   │   └── konsep/           # listing + detail konsep (hero 3D + body MDX)
 │   ├── components/
-│   │   ├── three/              # Komponen Three.js untuk visualisasi 3D
-│   │   │   ├── ConceptModel.tsx        # Wrapper untuk render primitive/GLB
-│   │   │   ├── primitives/             # Model primitif (QubitSphere, BlochSphere, dll)
-│   │   │   ├── loaders/                # Loader untuk model GLB
-│   │   │   └── Scene.tsx               # Canvas + lighting + controls
-│   │   ├── mdx/              # Komponen khusus untuk MDX
-│   │   └── ui/               # Komponen UI non-3D
-│   ├── content/              # Konten artikel dan konsep (MDX)
-│   ├── config/               # Konfigurasi mapping konsep ke visual
-│   └── lib/                  # Utilities
-├── public/
-│   └── models/               # Model GLB (akan ditambahkan nanti)
-├── scripts/                  # Skrip utilitas
-├── next.config.ts
-├── tailwind.config.ts
-├── tsconfig.json
-└── package.json
+│   │   ├── three/            # Scene, ConceptModel, primitives, loaders (GLB)
+│   │   ├── mdx/              # MDXComponents, InteractiveQubit
+│   │   └── ui/               # nav, footer, UI non-3D
+│   ├── content/              # artikel/*.mdx dan konsep/*.mdx
+│   ├── config/               # concept-visuals.ts (mapping visual)
+│   └── lib/                  # mdx.ts (baca & compile MDX), utils
+├── public/models/            # model GLB (placeholder saat ini)
+├── .github/workflows/        # CI + deploy blueprint
+├── scripts/                  # generate-test-glb.mjs, compress-models.sh
+├── Dockerfile / Dockerfile.dev / docker-compose.yml / nginx.conf
+└── DEPLOY.md                 # panduan deployment satu-perintah
 ```
 
-## 🚀 Teknologi
+## 🚀 Teknologi (versi aktual)
 
-- **Framework**: [Next.js 14](https://nextjs.org/) (App Router)
-- **Visualisasi 3D**: [Three.js](https://threejs.org/) via [React Three Fiber](https://docs.pmnd.rs/react-three-fiber)
-- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
-- **Konten**: [MDX](https://mdxjs.com/) untuk artikel interaktif
-- **Model 3D (future)**: [glTF/GLB](https://github.com/KhronosGroup/glTF) format
+| Layer | Tech |
+|-------|------|
+| Framework | Next.js **15** (App Router) |
+| React | **19** |
+| 3D | Three.js + **@react-three/fiber** + **@react-three/drei** |
+| Styling | **Tailwind CSS 4** (+ @tailwindcss/typography) |
+| Konten | MDX via **next-mdx-remote/rsc** + gray-matter + remark-gfm |
+| Deploy | Docker multi-stage + docker compose + Nginx/TLS |
 
 ## 🛠️ Pengembangan
 
 ### Prasyarat
+- Node.js 22+, pnpm 9+
 
-- Node.js 18+
-- npm/yarn/pnpm
-
-### Instalasi
-
+### Jalankan Lokal (development)
 ```bash
-# Clone repository
 git clone https://github.com/wisedevbara/openquantum-v2.git
 cd openquantum-v2
-
-# Install dependencies
-npm install
-
-# Jalankan development server
-npm run dev
-
-# Buka http://localhost:3000 di browser
+pnpm install
+pnpm dev            # → http://localhost:3000
 ```
 
-### Build Produksi
-
+### Production (standalone, di Docker)
 ```bash
-npm run build
-npm start
+# 1) build & jalankan production image
+docker compose -f docker-compose.yml up --build -d app-prod
+
+# 2) verifikasi
+curl -s http://localhost:3000/ -o /dev/null -w "%{http_code}\n"   # 200
+
+# 3) full stack dev + production + nginx:
+docker compose up -d app-dev      # dev hot-reload
+docker compose --profile production up -d   # app-prod + nginx
 ```
+
+### CI / CD
+- **CI** (github-actions): `pnpm install → lint → build (SSG) → docker image verify → static routes`, jalan tiap push/master
+- **Deploy** (blueprint): `deploy.yml` — workflow manual SSH via secrets `DEPLOY_HOST / DEPLOY_USER / DEPLOY_KEY`
+- Lihat **`DEPLOY.md`** untuk langkah lengkap (secrets, DNS, Let's Encrypt).
 
 ## 📋 Roadmap
 
 | Fase | Status | Deskripsi |
 |------|--------|-----------|
-| ✅ Phase 1 | Selesai | Struktur dasar project & folder layout |
-| 🔄 Phase 2 | Berjalan | Implementasi komponen Three.js dasar |
-| ⏳ Phase 3 | Rencana | Integrasi Sketchfab GLB models |
-| ⏳ Phase 4 | Rencana | Interaktivitas lanjutan & animasi kuantum |
-| ⏳ Phase 5 | Rencana | Deployment & optimasi performa |
+| ✅ Phase 1 | Selesai | Struktur project + folder layout + routing artikel/konsep |
+| ✅ Phase 2 | Selesai | Komponen Three.js dasar (Scene, QubitSphere, BlochSphere, EntanglementPair, ConceptModel) |
+| ⏳ Phase 3 | Sebagian | Pipeline GLB terbukti (placeholder) — **menunggu model Sketchfab asli** |
+| ✅ Phase 4 | Selesai | Interaktivitas: InteractiveQubit (slider + collapse) |
+| 🔄 Phase 5 | Berjalan | Deployment & optimasi performa (Docker, prod hardening, CI/CD) |
 
-## 🌐 Domain
+## 🌐 Deployment / Domain
 
-- **Saat ini**: Prototype berisi placeholder primitif Three.js
-- **Rencana akhir**: Menggantikan `openquantum.id` saat ini
-- **Source model 3D**: Akan beralih ke format GLB dari [Sketchfab](http://sketchfab.com) setelah prototype siap
+- **Production image** aktif dan terverifikasi (`openquantum-v2:prod`, standalone, SSG).
+- **CI/CD** hijau di GitHub Actions.
+- **Rencana**: menggantikan `openquantum.id` saat ini; reverse-proxy + TLS via Nginx + Let's Encrypt (`nginx.conf` + `docker-compose` production profile).
+- **Source model 3D**: primitive sekarang; upgrade ke **GLB dari Sketchfab** setelah prototype & model dipilih.
 
 ## 👥 Author
 
-- **Bara** - [@BaraMigSpace](https://x.com/BaraMigSpace)
-- Project dikembangkan untuk openquantum.id
+- **Bara** — [@BaraMigSpace](https://x.com/BaraMigSpace)
+- Project di-develop untuk **openquantum.id**
 
-## 📄 License
+## 📄 Lisensi
 
-MIT License - lihat [LICENSE](LICENSE) untuk detail.
-
-## 🤝 Kontribusi
-
-Kontribusi sangat diterima! Silakan buat Pull Request untuk perbaangan, fitur baru, atau perbaikan dokumentasi.
+MIT — selengkapnya di `LICENSE`.
 
 ---
 
-*OpenQuantum V2 - Belajar quantum computing tidak pernah semudah ini.*
+*OpenQuantum V2 — Belajar quantum computing tidak pernah semudah ini.*
